@@ -165,6 +165,20 @@ class FusionAuthClient:
             .post() \
             .go()
 
+    def create_connector(self, request, connector_id=None):
+        """
+        Creates a connector.  You can optionally specify an Id for the connector, if not provided one will be generated.
+
+        Attributes:
+            connector_id: (Optional) The Id for the connector. If not provided a secure random UUID will be generated.
+            request: The request object that contains all of the information used to create the connector.
+        """
+        return self.start().uri('/api/connector') \
+            .url_segment(connector_id) \
+            .body_handler(JSONBodyHandler(request)) \
+            .post() \
+            .go()
+
     def create_consent(self, request, consent_id=None):
         """
         Creates a user consent type. You can optionally specify an Id for the consent type, if not provided one will be generated.
@@ -1447,6 +1461,16 @@ class FusionAuthClient:
         """
         return self.start().uri('/api/system/audit-log') \
             .url_segment(audit_log_id) \
+            .get() \
+            .go()
+
+    def retrieve_connectors(self):
+        """
+        Retrieves all of the connectors.
+
+        Attributes:
+        """
+        return self.start().uri('/api/connector') \
             .get() \
             .go()
 
