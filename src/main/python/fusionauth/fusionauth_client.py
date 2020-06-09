@@ -473,6 +473,18 @@ class FusionAuthClient:
             .delete() \
             .go()
 
+    def delete_connector(self, connector_id):
+        """
+        Deletes the connector for the given Id.
+
+        Attributes:
+            connector_id: The Id of the connector to delete.
+        """
+        return self.start().uri('/api/connector') \
+            .url_segment(connector_id) \
+            .delete() \
+            .go()
+
     def delete_consent(self, consent_id):
         """
         Deletes the consent for the given Id.
