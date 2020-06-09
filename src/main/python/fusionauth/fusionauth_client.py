@@ -1464,6 +1464,18 @@ class FusionAuthClient:
             .get() \
             .go()
 
+    def retrieve_connector(self, connector_id):
+        """
+        Retrieves the connector with the given Id.
+
+        Attributes:
+            connector_id: The Id of the connector.
+        """
+        return self.start().uri('/api/connector') \
+            .url_segment(connector_id) \
+            .get() \
+            .go()
+
     def retrieve_connectors(self):
         """
         Retrieves all of the connectors.
@@ -2482,6 +2494,20 @@ class FusionAuthClient:
             .url_segment(application_id) \
             .url_segment("role") \
             .url_segment(role_id) \
+            .body_handler(JSONBodyHandler(request)) \
+            .put() \
+            .go()
+
+    def update_connector(self, connector_id, request):
+        """
+        Updates the connector with the given Id.
+
+        Attributes:
+            connector_id: The Id of the connector to update.
+            request: The request object that contains all of the new connector information.
+        """
+        return self.start().uri('/api/connector') \
+            .url_segment(connector_id) \
             .body_handler(JSONBodyHandler(request)) \
             .put() \
             .go()
