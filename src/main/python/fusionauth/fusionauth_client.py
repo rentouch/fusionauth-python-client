@@ -1076,6 +1076,20 @@ class FusionAuthClient:
             .patch() \
             .go()
 
+    def patch_connector(self, connector_id, request):
+        """
+        Updates, via PATCH, the connector with the given Id.
+
+        Attributes:
+            connector_id: The Id of the connector to update.
+            request: The request that contains just the new connector information.
+        """
+        return self.start().uri('/api/connector') \
+            .url_segment(connector_id) \
+            .body_handler(JSONBodyHandler(request)) \
+            .patch() \
+            .go()
+
     def patch_consent(self, consent_id, request):
         """
         Updates, via PATCH, the consent with the given Id.
