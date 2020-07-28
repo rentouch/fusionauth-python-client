@@ -1,6 +1,8 @@
 ## FusionAuth Python Client ![semver 2.0.0 compliant](http://img.shields.io/badge/semver-2.0.0-brightgreen.svg?style=flat-square)
 If you're integrating FusionAuth with a Python 3 application, this library will speed up your development time.
 
+THIS IS A FORK TO ALLOW NON BLOCKING REQUESTS WITH THE HELP OF TWISTED
+
 For additional information and documentation on FusionAuth refer to [https://fusionauth.io](https://fusionauth.io).
 
 ### Install
@@ -24,6 +26,10 @@ Now you're ready to begin making requests to FusionAuth. You will need to supply
 
 ```python
 client = FusionAuthClient('6b87a398-39f2-4692-927b-13188a81a9a3', 'http://localhost:9011')
+```
+You can then use the client methods as following:
+```python
+response = yield client.retrieve_user_by_email('foo@baar.com')
 ```
 
 Each method in the client library includes documentation to describe the use and parameters. In addition to this resource, review the API documentation. https://fusionauth.io/docs/v1/tech/apis/
