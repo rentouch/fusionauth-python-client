@@ -16,8 +16,8 @@
 
 import base64
 import json
-
-import requests
+import treq
+from twisted.internet.defer import inlineCallbacks
 
 
 class RESTClient:
@@ -90,6 +90,7 @@ class RESTClient:
         self._method = 'PUT'
         return self
 
+    @inlineCallbacks
     def go(self):
         if self._method is None:
             raise ValueError('The HTTP method must be set prior to calling go()')
@@ -102,9 +103,17 @@ class RESTClient:
 
         data = self._body_handler.get_body() if self._body_handler is not None else None
 
-        return ClientResponse(
-            requests.request(self._method, self._url, headers=self._headers, params=self._parameters, data=data, cert=self._certificate,
-                             timeout=self._connect_timeout, proxies=self._proxy))
+        # Initiate async request via treq
+        req = yield treq.request(self._method, self._url, headers=self._headers,
+                            params=self._parameters, data=data,
+                            timeout=self._connect_timeout)
+
+        # Fill response object with treq-response. The treq-response does not
+        # hold the content yet. We have to get the content with another async
+        # call. This is done in process().
+        response = ClientResponse(req)
+        yield response.process()
+        return response
 
     def header(self, key, value):
         self._headers[key] = value
@@ -167,24 +176,25 @@ class ClientResponse:
         status:
     """
 
-    def __init__(self, response, streaming=False):
+    def __init__(self, response):
         self.error_response = None
         self.exception = None
         self.response = response
         self.success_response = None
-        self.status = response.status_code
+        self.status = response.code
 
+    @inlineCallbacks
+    def process(self):
         if self.status < 200 or self.status > 299:
             if self.response.content is not None and self.status != 404:
                 if self.status == 400:
-                    self.error_response = self.response.json()
+                    self.error_response = yield self.response.json()
                 else:
-                    self.error_response = self.response
-        elif not streaming:
-            try:
-                self.success_response = self.response.json()
-            except ValueError:
-                self.success_response = None
+                    self.error_response = yield self.response.content()
+        try:
+            self.success_response = yield self.response.json()
+        except ValueError:
+            self.success_response = None
 
     def was_successful(self):
         return 200 <= self.status <= 299 and self.exception is None
