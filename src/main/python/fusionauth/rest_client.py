@@ -186,11 +186,15 @@ class ClientResponse:
     @inlineCallbacks
     def process(self):
         if self.status < 200 or self.status > 299:
-            if self.response.content is not None and self.status != 404:
+            content = yield self.response.content()
+            if content is not None and self.status != 404:
                 if self.status == 400:
                     self.error_response = yield self.response.json()
                 else:
-                    self.error_response = yield self.response.content()
+                    self.error_response = content
+            else:
+                self.error_response = f'HTTP Code: {404}: {content}'
+            return
         try:
             self.success_response = yield self.response.json()
         except ValueError:
