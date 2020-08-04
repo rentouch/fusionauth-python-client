@@ -104,9 +104,10 @@ class RESTClient:
         data = self._body_handler.get_body() if self._body_handler is not None else None
 
         # Initiate async request via treq
-        req = yield treq.request(self._method, self._url, headers=self._headers,
-                            params=self._parameters, data=data,
-                            timeout=self._connect_timeout)
+        req = yield treq.request(
+            self._method, self._url, headers=self._headers,
+            params=self._parameters, data=data.encode('utf8'),
+            timeout=self._connect_timeout)
 
         # Fill response object with treq-response. The treq-response does not
         # hold the content yet. We have to get the content with another async
