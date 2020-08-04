@@ -15,7 +15,7 @@
 #
 
 from deprecated import deprecated
-from fusionauth.rest_client import RESTClient, JSONBodyHandler, FormDataBodyHandler
+from fusionauth.rest_client import RESTClient, JSONBodyHandler
 
 
 class FusionAuthClient:
