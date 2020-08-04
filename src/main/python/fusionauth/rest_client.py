@@ -106,7 +106,7 @@ class RESTClient:
         # Initiate async request via treq
         req = yield treq.request(
             self._method, self._url, headers=self._headers,
-            params=self._parameters, data=data.encode('utf8'),
+            params=self._parameters, json=data,
             timeout=self._connect_timeout)
 
         # Fill response object with treq-response. The treq-response does not
@@ -212,14 +212,15 @@ class ClientResponse:
 
 class JSONBodyHandler:
     def __init__(self, body_object):
-        self._body = json.dumps(body_object)
+        self._body = body_object
 
     def set_headers(self, headers):
-        headers['Length'] = str(len(self._body.encode('utf-8')))
+        headers['Length'] = str(len(json.dumps(self._body).encode('utf-8')))
         headers['Content-Type'] = "application/json"
 
     def get_body(self):
         return self._body
+
 
 class FormDataBodyHandler:
     def __init__(self, body_object):

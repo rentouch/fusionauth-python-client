@@ -783,15 +783,12 @@ class FusionAuthClient:
             client_secret: (Optional) The client secret. This value may optionally be provided in the request body instead of the Authorization header.
             redirect_uri: The URI to redirect to upon a successful request.
         """
-        body = {
-            "code": code,
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "grant_type": "authorization_code",
-            "redirect_uri": redirect_uri,
-        }
         return self.start_anonymous().uri('/oauth2/token') \
-            .body_handler(FormDataBodyHandler(body)) \
+            .url_parameter('code', code) \
+            .url_parameter('client_id', client_id) \
+            .url_parameter('client_secret', client_secret) \
+            .url_parameter('grant_type', "authorization_code") \
+            .url_parameter('redirect_uri', redirect_uri) \
             .post() \
             .go()
 
@@ -807,16 +804,13 @@ class FusionAuthClient:
             scope: (Optional) This parameter is optional and if omitted, the same scope requested during the authorization request will be used. If provided the scopes must match those requested during the initial authorization request.
             user_code: (Optional) The end-user verification code. This code is required if using this endpoint to approve the Device Authorization.
         """
-        body = {
-            "refresh_token": refresh_token,
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "grant_type": "refresh_token",
-            "scope": scope,
-            "user_code": user_code,
-        }
         return self.start_anonymous().uri('/oauth2/token') \
-            .body_handler(FormDataBodyHandler(body)) \
+            .url_parameter('refresh_token', refresh_token) \
+            .url_parameter('client_id', client_id) \
+            .url_parameter('client_secret', client_secret) \
+            .url_parameter('grant_type', "refresh_token") \
+            .url_parameter('scope', scope) \
+            .url_parameter('user_code', scope) \
             .post() \
             .go()
 
@@ -845,17 +839,14 @@ class FusionAuthClient:
             scope: (Optional) This parameter is optional and if omitted, the same scope requested during the authorization request will be used. If provided the scopes must match those requested during the initial authorization request.
             user_code: (Optional) The end-user verification code. This code is required if using this endpoint to approve the Device Authorization.
         """
-        body = {
-            "username": username,
-            "password": password,
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "grant_type": "password",
-            "scope": scope,
-            "user_code": user_code,
-        }
         return self.start_anonymous().uri('/oauth2/token') \
-            .body_handler(FormDataBodyHandler(body)) \
+            .url_parameter('username', username) \
+            .url_parameter('password', password) \
+            .url_parameter('client_id', client_id) \
+            .url_parameter('client_secret', client_secret) \
+            .url_parameter('grant_type', "password") \
+            .url_parameter('scope', scope) \
+            .url_parameter('user_code', user_code) \
             .post() \
             .go()
 
