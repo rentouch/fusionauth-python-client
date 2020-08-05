@@ -18,6 +18,7 @@ import base64
 import json
 import treq
 from twisted.internet.defer import inlineCallbacks
+from urllib.parse import urlencode
 
 
 class RESTClient:
@@ -212,10 +213,10 @@ class ClientResponse:
 
 class JSONBodyHandler:
     def __init__(self, body_object):
-        self._body = body_object
+        self._body = json.dumps(body_object)
 
     def set_headers(self, headers):
-        headers['Length'] = str(len(json.dumps(self._body).encode('utf-8')))
+        headers['Length'] = str(len(self._body.encode('utf-8')))
         headers['Content-Type'] = "application/json"
 
     def get_body(self):
@@ -224,7 +225,7 @@ class JSONBodyHandler:
 
 class FormDataBodyHandler:
     def __init__(self, body_object):
-        self._body = body_object
+        self._body = urlencode(body_object)
 
     def set_headers(self, headers):
         headers['Content-Type'] = "application/x-www-form-urlencoded"
