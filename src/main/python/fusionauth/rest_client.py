@@ -18,6 +18,7 @@ import base64
 import json
 import treq
 from twisted.internet.defer import inlineCallbacks
+from urllib.parse import urlencode
 
 
 class RESTClient:
@@ -101,12 +102,13 @@ class RESTClient:
         if self._body_handler is not None:
             self._body_handler.set_headers(self._headers)
 
-        data = self._body_handler.get_body() if self._body_handler is not None else None
+        data = self._body_handler.get_body().encode(
+            'utf8') if self._body_handler is not None else None
 
         # Initiate async request via treq
         req = yield treq.request(
             self._method, self._url, headers=self._headers,
-            params=self._parameters, data=data.encode('utf8'),
+            params=self._parameters, data=data,
             timeout=self._connect_timeout)
 
         # Fill response object with treq-response. The treq-response does not
@@ -221,9 +223,10 @@ class JSONBodyHandler:
     def get_body(self):
         return self._body
 
+
 class FormDataBodyHandler:
     def __init__(self, body_object):
-        self._body = body_object
+        self._body = urlencode(body_object)
 
     def set_headers(self, headers):
         headers['Content-Type'] = "application/x-www-form-urlencoded"
